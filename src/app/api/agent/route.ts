@@ -92,7 +92,21 @@ export async function POST(request: NextRequest) {
     const settings = await updateAgentSettings(update)
     return NextResponse.json({ settings: maskSettings(settings) })
   } catch (error) {
-    return NextResponse.json({ error: errorMessage(error) }, { status: 400 })
+    const msg = errorMessage(error)
+    // The control-panel columns (API keys, country, instructions, …) come from
+    // migration 004. If it hasn't been run yet, give a clear, actionable hint.
+    if (/does not exist|column .* of relation|42703/i.test(msg)) {
+      return NextResponse.json(
+        {
+          error:
+            'الإعدادات المتقدّمة (مفاتيح API، البلد، التعليمات…) محتاجة تشغّل قاعدة البيانات أولاً: ' +
+            'افتح Supabase → SQL Editor وشغّل docs/setup-database.sql (أو migrations/004_agent_control.sql). ' +
+            '— Advanced settings need migration 004: run docs/setup-database.sql in the Supabase SQL Editor.',
+        },
+        { status: 409 }
+      )
+    }
+    return NextResponse.json({ error: msg }, { status: 400 })
   }
 }
 

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: "Segoe UI", system-ui, sans-serif; margin: 0; color: #1e1b2e; background: #fff; }
+      .head { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff;
+        padding: 13px 14px; display: flex; align-items: center; gap: 10px; }
+      .head svg { width: 30px; height: 30px; }
+      .head h1 { font-size: 14px; margin: 0; font-weight: 700; }
+      .head p { font-size: 10px; margin: 1px 0 0; opacity: .85; }
+      .body { padding: 13px 14px; }
+      .now { font-size: 13px; font-weight: 600; min-height: 18px; margin-bottom: 8px; }
+      .bar { height: 7px; background: #ece8f8; border-radius: 5px; overflow: hidden; }
+      .bar > div { height: 100%; width: 0%; border-radius: 5px;
+        background: linear-gradient(90deg, #8b5cf6, #6d28d9); transition: width .35s; }
+      .counts { font-size: 11px; color: #7c3aed; font-weight: 600; margin-top: 4px; }
+      .save { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 2px; min-height: 14px; }
+      h2 { font-size: 11px; color: #8b8a95; text-transform: uppercase; letter-spacing: .4px;
+        margin: 14px 0 4px; }
+      .item { display: flex; align-items: center; gap: 9px; padding: 7px 2px; border-bottom: 1px solid #f0eef8; }
+      .ava { width: 28px; height: 28px; border-radius: 50%; flex: none; color: #fff;
+        background: linear-gradient(135deg, #a78bfa, #7c3aed); display: flex; align-items: center;
+        justify-content: center; font-size: 11px; font-weight: 700; }
+      .meta { flex: 1; min-width: 0; }
+      .meta a { color: #1e1b2e; font-weight: 600; font-size: 12.5px; text-decoration: none; }
+      .meta small { display: block; color: #8b8a95; font-size: 10.5px; }
+      .er { font-size: 10.5px; font-weight: 700; color: #16a34a; white-space: nowrap; }
+      .empty { color: #8b8a95; font-size: 12px; padding: 8px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 96 C40 58 62 32 96 28 C94 64 76 90 46 92 Z" />
+          <path d="M44 94 L90 40" />
+          <path d="M56 78 L74 73" /><path d="M64 68 L82 63" /><path d="M72 58 L88 53" />
+          <path d="M40 96 L30 106" />
+        </g>
+      </svg>
+      <div>
+        <h1>Risha Agent — Live</h1>
+        <p>Watching the agent scrape Instagram</p>
+      </div>
+    </div>
+    <div class="body">
+      <div class="now" id="now">Idle — start a Live scrape from the popup.</div>
+      <div class="bar"><div id="barFill"></div></div>
+      <div class="counts" id="counts"></div>
+      <div class="save" id="save"></div>
+      <h2>Kept leads</h2>
+      <div id="list"><div class="empty" id="empty">Nothing yet…</div></div>
+    </div>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

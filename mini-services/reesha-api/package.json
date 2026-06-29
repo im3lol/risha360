@@ -1,0 +1,7 @@
+{
+  "name": "reesha-api",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "cd /home/z/my-project/reesha/backend && REESHA_DATABASE_URL=sqlite+aiosqlite:///./reesha.db python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload"
+  }
+}

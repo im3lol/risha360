@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --brand: #7c3aed;
+        --brand2: #6d28d9;
+        --ink: #1e1b2e;
+        --muted: #8b8a95;
+        --line: #ececf0;
+        --bg: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        width: 340px; margin: 0; color: var(--ink); background: var(--bg);
+      }
+      .head {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 11px;
+      }
+      .head svg { width: 34px; height: 34px; flex: none;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+      .head h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: .2px; }
+      .head p { font-size: 10.5px; margin: 2px 0 0; opacity: .85; }
+      .body { padding: 14px 16px 16px; }
+      label { display: block; font-size: 11px; font-weight: 600; margin: 0 0 4px;
+        color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+      .field { margin-bottom: 11px; }
+      input, select {
+        width: 100%; padding: 9px 11px; font-size: 13px; color: var(--ink); background: #fff;
+        border: 1.5px solid #e7e7ee; border-radius: 9px; outline: none; transition: border-color .15s;
+      }
+      input:focus, select:focus { border-color: var(--brand); }
+      .row { display: flex; gap: 10px; }
+      .row > .field { flex: 1; }
+      .check { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #555;
+        margin: 2px 0 6px; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; }
+      .check input { width: auto; }
+      button {
+        width: 100%; margin-top: 4px; padding: 11px; font-size: 13.5px; font-weight: 700;
+        color: #fff; background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(124,58,237,.32);
+        transition: transform .08s, box-shadow .15s;
+      }
+      button:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(124,58,237,.42); }
+      button:active:not(:disabled) { transform: translateY(1px); }
+      button:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+      .panel { margin-top: 13px; padding: 11px; background: #faf9ff; border: 1px solid #eee9fb;
+        border-radius: 11px; display: none; }
+      .panel.on { display: block; }
+      .bar { height: 7px; background: #ece8f8; border-radius: 5px; overflow: hidden; }
+      .bar > div { height: 100%; width: 0%; border-radius: 5px;
+        background: linear-gradient(90deg, #8b5cf6, #6d28d9); transition: width .35s; }
+      #phase { margin-top: 8px; font-size: 12px; color: var(--ink); min-height: 15px; font-weight: 500; }
+      #counts { margin-top: 2px; font-size: 11px; color: var(--brand); font-weight: 600; }
+      #list { margin-top: 9px; max-height: 168px; overflow: auto; }
+      .item { display: flex; align-items: center; gap: 9px; padding: 7px 4px;
+        border-bottom: 1px solid #f0eef8; }
+      .item:last-child { border-bottom: none; }
+      .ava { width: 28px; height: 28px; border-radius: 50%; flex: none; color: #fff;
+        background: linear-gradient(135deg, #a78bfa, #7c3aed); display: flex; align-items: center;
+        justify-content: center; font-size: 11px; font-weight: 700; }
+      .meta { flex: 1; min-width: 0; }
+      .meta a { color: var(--ink); font-weight: 600; font-size: 12.5px; text-decoration: none; }
+      .meta a:hover { color: var(--brand); }
+      .meta small { display: block; color: var(--muted); font-size: 10.5px; }
+      .er { font-size: 10.5px; font-weight: 700; color: #16a34a; white-space: nowrap; }
+      footer { margin-top: 12px; text-align: center; }
+      footer a { font-size: 11px; color: var(--brand); text-decoration: none; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 96 C40 58 62 32 96 28 C94 64 76 90 46 92 Z" />
+          <path d="M44 94 L90 40" />
+          <path d="M56 78 L74 73" /><path d="M64 68 L82 63" /><path d="M72 58 L88 53" />
+          <path d="M40 96 L30 106" />
+        </g>
+      </svg>
+      <div>
+        <h1>Risha Agent</h1>
+        <p>Automation &amp; Web Scraping</p>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="field">
+        <label>Platform</label>
+        <select id="platform">
+          <option value="instagram">Instagram</option>
+          <option value="tiktok">TikTok (experimental)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Category · الفئة (optional — blank = all Saudi influencers)</label>
+        <input id="category" placeholder="All Saudi influencers" />
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>City · المدينة</label>
+          <input id="city" value="Riyadh" />
+        </div>
+        <div class="field">
+          <label>Min followers</label>
+          <input id="minFollowers" type="number" value="20000" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Max profiles</label>
+        <input id="limit" type="number" value="30" />
+      </div>
+      <label class="check">
+        <input type="checkbox" id="personalOnly" checked />
+        Personal accounts only — skip companies &amp; pages
+      </label>
+      <label class="check">
+        <input type="checkbox" id="aiFilter" checked />
+        🧠 AI vision filter — keep influencers/celebs/artists only
+      </label>
+      <label class="check">
+        <input type="checkbox" id="liveMode" />
+        👁️ Live mode — open a tab and watch it work (Axiom-style)
+      </label>
+      <button id="start">⚡ Start scraping</button>
+
+      <div class="panel" id="panel">
+        <div class="bar"><div id="barFill"></div></div>
+        <div id="phase"></div>
+        <div id="counts"></div>
+        <div id="list"></div>
+      </div>
+
+      <footer><a href="#" id="opts">⚙︎ Settings — backend URL &amp; agent secret</a></footer>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

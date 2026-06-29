@@ -1,0 +1,138 @@
+# ============================================================================
+# Risha 360 — full stack
+#   docker compose up -d --build
+#
+# Brings up: the Next.js app, the autonomous discovery worker, and the
+# self-hosted scraping services (Scrapling + Crawl4AI). Browser-use is opt-in
+# via the "browser-use" profile (heavy: bundles Chromium).
+#
+# Values are read from the .env file in this directory (compose auto-loads it).
+# Internal service URLs are hard-set below to the compose network names — the
+# localhost URLs in .env are only for running outside Docker.
+# ============================================================================
+
+services:
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: "${NEXT_PUBLIC_SUPABASE_URL:-}"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}"
+        NEXT_PUBLIC_APP_NAME: "${NEXT_PUBLIC_APP_NAME:-Risha 360}"
+        NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-}"
+    restart: unless-stopped
+    ports:
+      # Host port is configurable (APP_PORT) to avoid clashing with a local dev
+      # server already on 3000. The container always listens on 3000 internally.
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      # Server-only secrets / config (read at runtime).
+      SUPABASE_SERVICE_ROLE_KEY: "${SUPABASE_SERVICE_ROLE_KEY:-}"
+      AGENT_CRON_SECRET: "${AGENT_CRON_SECRET:-}"
+
+      # Discovery source + planner.
+      DISCOVERY_SOURCE: "${DISCOVERY_SOURCE:-self_scrape}"
+      PLANNER_PROVIDER: "${PLANNER_PROVIDER:-auto}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      GEMINI_DISCOVERY_MODEL: "${GEMINI_DISCOVERY_MODEL:-gemini-2.0-flash}"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      OPENROUTER_MODEL: "${OPENROUTER_MODEL:-}"
+      OPENROUTER_VISION_MODEL: "${OPENROUTER_VISION_MODEL:-}"
+      OPENROUTER_SITE_URL: "${OPENROUTER_SITE_URL:-}"
+      OPENROUTER_APP_NAME: "${OPENROUTER_APP_NAME:-Risha 360}"
+
+      # Legacy Apify (only used when DISCOVERY_SOURCE=apify).
+      APIFY_TOKEN: "${APIFY_TOKEN:-}"
+
+      # Self-hosted scraping services — internal compose network names.
+      SCRAPLING_SERVICE_URL: "http://scrapling:8011"
+      CRAWL4AI_BASE_URL: "http://crawl4ai:11235"
+      BROWSER_USE_SERVICE_URL: "${BROWSER_USE_SERVICE_URL:-}"
+      INSTAGRAM_AGENT_URL: "${INSTAGRAM_AGENT_URL:-http://instagram-agent:8013}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      scrapling:
+        condition: service_healthy
+      crawl4ai:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      target: worker
+    restart: unless-stopped
+    environment:
+      AGENT_BASE_URL: "http://app:3000"
+      AGENT_CRON_SECRET: "${AGENT_CRON_SECRET:-}"
+      SUPABASE_SERVICE_ROLE_KEY: "${SUPABASE_SERVICE_ROLE_KEY:-}"
+    depends_on:
+      app:
+        condition: service_healthy
+
+  scrapling:
+    build:
+      context: ./integrations
+      dockerfile: scrapling-api/Dockerfile
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8011/health')"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  crawl4ai:
+    image: unclecode/crawl4ai:0.8.9
+    restart: unless-stopped
+    shm_size: "1gb"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:11235/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  instagram-agent:
+    profiles: ["browser-agent"]
+    build:
+      context: ./integrations
+      dockerfile: instagram-agent/Dockerfile
+    restart: unless-stopped
+    shm_size: "1gb"
+    volumes:
+      # Logged-in session for the headless agent (Playwright storage_state).
+      - ./secrets/ig-state.json:/run/ig-state.json:ro
+    environment:
+      IG_PROXY: "${IG_PROXY:-}"
+      # Default to the mounted session file; .env can still override.
+      IG_STORAGE_STATE: "${IG_STORAGE_STATE:-/run/ig-state.json}"
+      IG_COOKIES: "${IG_COOKIES:-}"
+      IG_MAX_PROFILES: "${IG_MAX_PROFILES:-30}"
+      IG_MIN_DELAY: "${IG_MIN_DELAY:-3}"
+      IG_MAX_DELAY: "${IG_MAX_DELAY:-7}"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8013/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  browser-use:
+    profiles: ["browser-use"]
+    build:
+      context: ./integrations
+      dockerfile: browser-use-api/Dockerfile
+    restart: unless-stopped
+    shm_size: "1gb"
+    environment:
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      BROWSER_USE_MODEL: "${BROWSER_USE_MODEL:-gemini-2.0-flash}"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8012/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

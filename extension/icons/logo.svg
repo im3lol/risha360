@@ -1,0 +1,21 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- feather outline (Risha = feather) -->
+    <path d="M40 96 C40 58 62 32 96 28 C94 64 76 90 46 92 Z"/>
+    <!-- central spine -->
+    <path d="M44 94 L90 40"/>
+    <!-- barbs -->
+    <path d="M56 78 L74 73"/>
+    <path d="M64 68 L82 63"/>
+    <path d="M72 58 L88 53"/>
+    <!-- quill -->
+    <path d="M40 96 L30 106"/>
+  </g>
+</svg>

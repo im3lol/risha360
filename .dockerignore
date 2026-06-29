@@ -1,0 +1,40 @@
+# Dependencies & build output (reinstalled/rebuilt inside the image)
+node_modules
+.next
+.next-runtime
+.next-build-check
+out
+build
+
+# Heavy legacy / vendored trees not needed by the Next.js app image
+reesha
+integrations/vendor
+extension
+mini-services
+examples
+download
+upload
+skills
+agent-ctx
+.zscripts
+
+# Local env & secrets (passed at runtime / build args instead)
+.env
+.env.*
+!.env.example
+
+# Logs & local runtime artifacts
+*.log
+.dev-server*
+.runtime-server*
+.agent-worker*
+
+# Tooling / VCS / editor
+.git
+.gitignore
+.vscode
+.idea
+*.tsbuildinfo
+Dockerfile
+.dockerignore
+docker-compose*.yml

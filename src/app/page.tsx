@@ -226,7 +226,7 @@ export default function Home() {
       </Sidebar>
 
       {/* Main Content Area */}
-      <SidebarInset>
+      <SidebarInset className="min-w-0 overflow-x-hidden">
         {/* Top Header */}
         <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-slate-200/60">
           <div className="flex items-center justify-between px-4 sm:px-6 h-12">
@@ -254,7 +254,7 @@ export default function Home() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 px-4 sm:px-6 py-5">
+        <main className="flex-1 min-w-0 overflow-x-hidden px-4 sm:px-6 py-5">
           {renderContent()}
         </main>
 

@@ -58,13 +58,13 @@ export function OverviewTab() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card>
+        <Card className="min-w-0">
           <CardHeader><CardTitle className="text-sm">Acquisition Funnel</CardTitle></CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             {stats.totalLeads === 0 ? (
               <EmptyBlock text="No leads have been collected yet." />
             ) : (
-              <ChartContainer config={{ count: { label: 'Count', color: '#7e22ce' } }} className="h-64">
+              <ChartContainer config={{ count: { label: 'Count', color: '#7e22ce' } }} className="h-64 w-full">
                 <BarChart data={stats.funnelData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                   <XAxis type="number" hide />
@@ -81,7 +81,7 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader><CardTitle className="text-sm">Category Distribution</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {stats.categoryDistribution.length === 0 ? (
@@ -103,7 +103,7 @@ export function OverviewTab() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm">
               <Activity className="size-4 text-purple-700" />

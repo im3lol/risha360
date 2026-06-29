@@ -67,14 +67,14 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activePage) {
-      case 'overview': return <OverviewTab onNavigate={setActivePage} />;
+      case 'overview': return <OverviewTab />;
       case 'leads': return <LeadsTab />;
       case 'discovery': return <DiscoveryTab />;
       case 'outreach': return <OutreachTab />;
       case 'agents': return <AgentTab />;
       case 'analytics': return <AnalyticsTab />;
       case 'settings': return <SettingsTab />;
-      default: return <OverviewTab onNavigate={setActivePage} />;
+      default: return <OverviewTab />;
     }
   };
 

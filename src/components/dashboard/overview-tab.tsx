@@ -5,26 +5,33 @@ import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { useDashboardStats } from '@/lib/use-supabase'
+import { Onboarding } from '@/components/dashboard/onboarding'
 
 const funnelColors = ['#7e22ce', '#9333ea', '#0891b2', '#2563eb', '#10b981', '#22c55e']
 
-export function OverviewTab() {
+export function OverviewTab({ onNavigate }: { onNavigate?: (tab: string) => void }) {
   const { stats, loading, dbReady } = useDashboardStats()
 
   if (loading) {
     return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <Onboarding onNavigate={onNavigate} />
+        <div className="flex h-[40vh] items-center justify-center">
+          <Loader2 className="size-8 animate-spin text-primary" />
+        </div>
       </div>
     )
   }
 
   if (!dbReady || !stats) {
     return (
-      <EmptyState
-        title="Database is not ready"
-        description="Connect Supabase and run the migration before live metrics can appear."
-      />
+      <div className="space-y-6">
+        <Onboarding onNavigate={onNavigate} />
+        <EmptyState
+          title="Database is not ready"
+          description="Connect Supabase and run the migration before live metrics can appear."
+        />
+      </div>
     )
   }
 
@@ -39,6 +46,7 @@ export function OverviewTab() {
 
   return (
     <div className="space-y-6">
+      <Onboarding onNavigate={onNavigate} />
       <div className="text-xs text-emerald-700">Live data from Supabase</div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">

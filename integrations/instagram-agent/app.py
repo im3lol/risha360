@@ -415,11 +415,13 @@ async def run(req: RunRequest):
 
             usernames: list[str] = []
 
-            # 1) Discover usernames across queries. When personal_only, keep just
-            #    VERIFIED accounts from top-search (real public figures/creators)
-            #    to avoid the brand/shop noise that generic keywords return.
+            # 1) Discover usernames across queries. Keep VERIFIED accounts first,
+            #    then non-verified ones too (more real micro-creators per name) —
+            #    the per-profile personal-account filter below removes brands/shops.
+            #    (verified-only was too strict and dried up once famous names were
+            #    already saved; this surfaces NEW people from each search.)
             for query in req.queries:
-                for name in await _discover(page, query, authenticated, verified_only=req.personal_only):
+                for name in await _discover(page, query, authenticated, verified_only=False):
                     nl = name.lower()
                     if nl in seen or nl in RESERVED:
                         continue

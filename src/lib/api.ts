@@ -148,6 +148,23 @@ export interface AgentDecision {
   createdAt: string
 }
 
+export interface LiveActivity {
+  status: {
+    enabled: boolean
+    running: boolean
+    currentStep: string | null
+    activeBatch: string | null
+    lastTick: string | null
+    nextRun: string | null
+    lastError: string | null
+  }
+  events: { id: string; type: string; message: string; at: string; createdAt: string }[]
+}
+
+export function getLiveActivity(limit = 30): Promise<LiveActivity> {
+  return apiFetch<LiveActivity>(`/api/discovery/activity?limit=${limit}`)
+}
+
 export async function getAgentDecisions(limit = 20): Promise<AgentDecision[]> {
   const result = await apiFetch<ApiEnvelope<AgentDecision[]>>(
     `/api/discovery/decisions?limit=${limit}`

@@ -53,6 +53,7 @@ import {
   type DiscoveryBatch,
 } from '@/lib/domain-types'
 import { AgentControlPanel } from './agent-control-panel'
+import { LiveMonitor } from './live-monitor'
 
 type DiscoveryConfig = Awaited<ReturnType<typeof getDiscoveryConfig>>
 
@@ -243,6 +244,8 @@ export function DiscoveryTab() {
           tone="neutral"
         />
       </div>
+
+      <LiveMonitor />
 
       <AgentControlPanel />
 

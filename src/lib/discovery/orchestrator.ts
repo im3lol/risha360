@@ -285,6 +285,12 @@ export async function syncBatch(id: string) {
 
   await supabase.from('discovery_batches').update({ status: 'processing' }).eq('id', id)
   try {
+  await logActivity(
+    'agent',
+    `🔎 بدأ البحث: بفحص ${config.plan.queries.length} اسم/كلمة في ${config.plan.category}/${config.plan.city} (متابعين ≥ ${config.plan.minFollowers.toLocaleString()})…`,
+    'discovery_batch',
+    id
+  )
   const candidateGroups = await Promise.all(runs.map(getRunCandidates))
   await upsertPipelineTask(id, 'enrichment', 'running', {
     progress: 30,
@@ -293,6 +299,12 @@ export async function syncBatch(id: string) {
     completed_steps: 1,
   })
   const candidates = await enrichCandidates(candidateGroups.flat())
+  await logActivity(
+    'agent',
+    `👁️ فحص ${candidates.length} حساب — بيقيّم ويحفظ المؤثرين الحقيقيين…`,
+    'discovery_batch',
+    id
+  )
   const result = await saveCandidates(id, config.plan, candidates)
   const { data: routed, error: routingError } = await supabase.rpc(
     'route_qualified_leads_to_sales',
@@ -339,8 +351,8 @@ export async function syncBatch(id: string) {
   }).eq('discovery_batch_id', id).eq('agent_type', 'discovery')
 
   await logActivity(
-    'batch',
-    `Completed ${batch.name}: ${result.found} profiles found, ${result.created} leads created, ${routedCount} routed to sales`,
+    'agent',
+    `✅ خلص: ${result.created} مؤثر جديد اتحفظ${result.updated ? ` (+${result.updated} تحديث)` : ''}، ${routedCount} اتوزّع على المبيعات — من ${result.found} حساب.`,
     'discovery_batch',
     id,
     { found: result.found, created: result.created, updated: result.updated, routed: routedCount }

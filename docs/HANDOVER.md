@@ -1,7 +1,7 @@
 # Risha 360 — Project Handover
 
 > A practical handover for a new developer taking over the project.
-> Detailed references: **[docs/API.md](docs/API.md)** · **[docs/DATABASE.md](docs/DATABASE.md)**
+> Detailed references: **[API.md](API.md)** · **[DATABASE.md](DATABASE.md)**
 
 ---
 
@@ -193,7 +193,7 @@ Two mechanisms (`src/lib/api-auth.ts`):
 
 **RLS:** `authenticated` = read-only (and cannot read the API-key columns); `service_role` = full
 read/write (all server routes); `anon` = no access. All writes go through the service-role client.
-Full matrix + per-endpoint auth in **[docs/API.md](docs/API.md)**.
+Full matrix + per-endpoint auth in **[API.md](API.md)**.
 
 ---
 
@@ -203,11 +203,12 @@ Full matrix + per-endpoint auth in **[docs/API.md](docs/API.md)**.
 `social_profiles (platform, platform_username)`. The safe write path is the RPC
 `save_discovered_candidate`. Score thresholds are hard-coded in the RPCs: **≥60 = qualified,
 ≥80 = critical**; routing to sales requires score ≥60 AND platform=instagram.
-Full schema, columns, RPCs, RLS, triggers, indexes in **[docs/DATABASE.md](docs/DATABASE.md)**.
+Full schema, columns, RPCs, RLS, triggers, indexes in **[DATABASE.md](DATABASE.md)**.
 
-**Migration order:** `supabase-migration.sql` (base) → `003` (scoring persistence) →
-`004` (dashboard control columns) → `005` (API-key column REVOKE). `/api/migrate` is a disabled
-410 stub — migrations are run manually in the Supabase SQL Editor.
+**Easiest setup:** run **[setup-database.sql](setup-database.sql)** once in the Supabase SQL Editor —
+it contains the whole schema (base + migrations 003/004/005) in the right order, idempotent.
+(The individual files still live in `migrations/` + `supabase-migration.sql`.) `/api/migrate` is a
+disabled 410 stub — migrations are run manually in the Supabase SQL Editor.
 
 ---
 
